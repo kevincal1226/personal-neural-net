@@ -2,7 +2,11 @@
 from matplotlib import pyplot as plt
 import numpy as np
 
+def makeLetterA(neuron) -> any:
+    return neuron
 
+def makeJXX(neuron) -> any:
+    return neuron
 
 def main():
     arrSize = 10
@@ -16,6 +20,8 @@ def main():
     plt.scatter(onX, onY, color='b')
     plt.title("Completely Off Neuron Grid")
     plt.show()
+    neuronA = makeLetterA(neuronOff)
+
 
 if __name__ == "__main__":
     main()
