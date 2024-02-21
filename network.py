@@ -152,8 +152,6 @@ def main():
     plotNeuron(randNeuron, "Randomly Generated Neuron")
     randNeuron = monteCarlo(randNeuron, jInteractAB)
     plotNeuron(randNeuron, "Once-Random Neuron Now Converted Into \"B\" With AB Interaction Matrix")        
-    
-
 
 if __name__ == "__main__":
     main()
