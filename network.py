@@ -1,12 +1,12 @@
 # %%
 from matplotlib import pyplot as plt
 import numpy as np
+from itertools import product
 
 ARR_SIZE = 10
 
 def emptyNeuron() -> any:
-    neuronOff = np.empty([ARR_SIZE, ARR_SIZE])
-    neuronOff.fill(-1)    
+    neuronOff = np.ones([ARR_SIZE, ARR_SIZE]) * -1
     return neuronOff
 
 
@@ -88,7 +88,45 @@ def plotNeuron(neuron, title: str = "Neuron Grid") -> None:
 
 
 def makeJXX(neuron) -> any:
-    return neuron
+    jInteractXX = np.ones([ARR_SIZE, ARR_SIZE, ARR_SIZE, ARR_SIZE]) * -1
+    for i, j, k, l in product(range(ARR_SIZE), repeat=4):
+        jInteractXX[i][j][k][l] = neuron[i][j] * neuron[k][l]
+    return jInteractXX
+
+def makeJXY(neuron1, neuron2) -> any:
+    jInteract11 = makeJXX(neuron1)
+    jInteract22 = makeJXX(neuron2)
+    jInteractXY = np.ones([ARR_SIZE, ARR_SIZE, ARR_SIZE, ARR_SIZE]) * -1
+    for i, j, k, l in product(range(ARR_SIZE), repeat=4):
+        jInteractXY[i][j][k][l] = (jInteract11[i][j][k][l] + jInteract22[i][j][k][l]) / 2
+    return jInteractXY
+
+def calculateEnergy(jInteract, neuron) -> float:
+    energy: float = 0
+    for i, j, k, l in product(range(ARR_SIZE), repeat=4):
+        energy -= (jInteract[i][j][k][l]*neuron[i][j]*neuron[k][l])
+    return energy
+
+def makeRandLetter(neuron) -> any:
+    randNeuron = neuron
+    numIterations = 50
+    for i in range(numIterations):
+        randSwitch = np.random.randint(0, 10, [1, 2])
+        randNeuron[randSwitch[0][0]][randSwitch[0][1]] *= -1
+    return randNeuron
+
+def monteCarlo(neuron, jInteract) -> any:
+    newA = neuron
+    monteSteps = 1
+    eMonte = 0
+    for n in range(monteSteps):
+        for k, l in product(range(ARR_SIZE), repeat=2):
+            for i, j in product(range(ARR_SIZE), repeat=2):
+                eMonte -= (jInteract[i][j][k][l]*newA[i][j]*newA[k][l])
+            if eMonte > 0: #Monte Carlo flip method: T = 0, flip
+                newA[k][l] = -1 * newA[k][l]
+            eMonte = 0
+    return newA
 
 def main():
     neuronOff = emptyNeuron()
@@ -99,6 +137,22 @@ def main():
     plotNeuron(neuronB, "Letter B Grid")
     neuronC = makeLetterC()
     plotNeuron(neuronC, "Letter C Grid")
+    jInteractAA = makeJXX(neuronA)
+    jInteractAB = makeJXY(neuronA, neuronB)
+    print(f"Energy of A Neuron with AA Interaction Matrix: {calculateEnergy(jInteractAA, neuronA)}")
+    randNeuron = makeRandLetter(neuronA)
+    plotNeuron(randNeuron, "Randomly Generated Neuron")
+    randNeuron = monteCarlo(randNeuron, jInteractAA)
+    plotNeuron(randNeuron, "Once-Random Neuron Now Converted Into An A")
+    randNeuron = makeRandLetter(neuronA)
+    plotNeuron(randNeuron, "Randomly Generated Neuron")
+    randNeuron = monteCarlo(randNeuron, jInteractAB)
+    plotNeuron(randNeuron, "Once-Random Neuron Now Converted Into \"A\" With AB Interaction Matrix")    
+    randNeuron = makeRandLetter(neuronB)
+    plotNeuron(randNeuron, "Randomly Generated Neuron")
+    randNeuron = monteCarlo(randNeuron, jInteractAB)
+    plotNeuron(randNeuron, "Once-Random Neuron Now Converted Into \"B\" With AB Interaction Matrix")        
+    
 
 
 if __name__ == "__main__":
