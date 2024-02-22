@@ -128,7 +128,7 @@ def monteCarlo(neuron, jInteract) -> any:
             eMonte = 0
     return newA
 
-def main():
+def basicInteractionMatrixStuff() -> None:
     neuronOff = emptyNeuron()
     plotNeuron(neuronOff, "Completely Off Neuron Grid")
     neuronA = makeLetterA()
@@ -151,7 +151,25 @@ def main():
     randNeuron = makeRandLetter(neuronB)
     plotNeuron(randNeuron, "Randomly Generated Neuron")
     randNeuron = monteCarlo(randNeuron, jInteractAB)
-    plotNeuron(randNeuron, "Once-Random Neuron Now Converted Into \"B\" With AB Interaction Matrix")        
+    plotNeuron(randNeuron, "Once-Random Neuron Now Converted Into \"B\" With AB Interaction Matrix")         
+
+def abcInteractionMatrix() -> None:
+    alpha: float = 0.67
+    beta: float = 1 - alpha
+    jAB = makeJXY(makeLetterA(), makeLetterB())
+    jCC = makeJXX(makeLetterC())
+    jABC = jAB * alpha + jCC * beta
+    monteA = monteCarlo(makeRandLetter(emptyNeuron()), jABC)
+    monteB = monteCarlo(makeRandLetter(emptyNeuron()), jABC)
+    monteC = monteCarlo(makeRandLetter(emptyNeuron()), jABC)
+    plotNeuron(monteA, "Letter A")
+    plotNeuron(monteB, "Letter B")
+    plotNeuron(monteC, "Letter C")
+
+def main():
+    basicInteractionMatrixStuff()
+    #abcInteractionMatrix()
+    return
 
 if __name__ == "__main__":
     main()
